@@ -54,3 +54,9 @@ function d3_selection_style(name, value, priority) {
       ? styleNull : (typeof value === "function"
       ? styleFunction : styleConstant);
 }
+
+var d3_selection_stylePrefix = (function(p) {
+  var i = -1, n = p.length, s = d3_document.createElement("div").style;
+  while (++i < n) if (p[i] + "Transform" in s) return "-" + p[i].toLowerCase() + "-";
+  return "";
+})(["webkit", "ms", "Moz", "O"]);

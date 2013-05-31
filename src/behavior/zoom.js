@@ -101,11 +101,11 @@ d3.behavior.zoom = function() {
         event_ = event.of(target, arguments),
         eventTarget = d3.event.target,
         moved = 0,
-        w = d3.select(d3_window).on("mousemove.zoom", mousemove).on("mouseup.zoom", mouseup),
+        w = d3.select(d3_window).on("mousemove.zoom", mousemove).on("mouseup.zoom", mouseup).on("selectstart.zoom", d3_eventCancel),
         l = location(d3.mouse(target));
 
     d3_window.focus();
-    d3_eventCancel();
+    d3.select("body").style(d3_selection_stylePrefix + "user-select", "none");
 
     function mousemove() {
       moved = 1;
@@ -115,7 +115,8 @@ d3.behavior.zoom = function() {
 
     function mouseup() {
       if (moved) d3_eventCancel();
-      w.on("mousemove.zoom", null).on("mouseup.zoom", null);
+      w.on("mousemove.zoom", null).on("mouseup.zoom", null).on("selectstart.zoom", null);
+      d3.select("body").style(d3_selection_stylePrefix + "user-select", null);
       if (moved && d3.event.target === eventTarget) d3_eventSuppress(w, "click.zoom");
     }
   }
