@@ -79,5 +79,5 @@ function d3_timer_sweep() {
 }
 
 var d3_timer_frame = d3_window.requestAnimationFrame
-    || d3_window[d3_vendor + "RequestAnimationFrame"]
+    || d3_window[d3_vendor.toLowerCase() + "RequestAnimationFrame"]
     || function(callback) { setTimeout(callback, 17); };

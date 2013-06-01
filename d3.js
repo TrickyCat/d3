@@ -570,7 +570,7 @@ d3 = function() {
     return n.querySelector(s);
   }, d3_selectAll = function(s, n) {
     return n.querySelectorAll(s);
-  }, d3_selectRoot = d3_document.documentElement, d3_selectMatcher = d3_selectRoot.matchesSelector || d3_selectRoot.webkitMatchesSelector || d3_selectRoot.mozMatchesSelector || d3_selectRoot.msMatchesSelector || d3_selectRoot.oMatchesSelector, d3_selectMatches = function(n, s) {
+  }, d3_selectRoot = d3_document.documentElement, d3_selectMatcher = d3_selectRoot.matchesSelector || d3_selectRoot[d3_vendor.toLowerCase() + "MatchesSelector"], d3_selectMatches = function(n, s) {
     return d3_selectMatcher.call(n, s);
   };
   if (typeof Sizzle === "function") {
@@ -1905,7 +1905,7 @@ d3 = function() {
     d3_timer_queueTail = t0;
     return time;
   }
-  var d3_timer_frame = d3_window.requestAnimationFrame || d3_window[d3_vendor + "RequestAnimationFrame"] || function(callback) {
+  var d3_timer_frame = d3_window.requestAnimationFrame || d3_window[d3_vendor.toLowerCase() + "RequestAnimationFrame"] || function(callback) {
     setTimeout(callback, 17);
   };
   var d3_format_decimalPoint = ".", d3_format_thousandsSeparator = ",", d3_format_grouping = [ 3, 3 ];
