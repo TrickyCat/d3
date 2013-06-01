@@ -23,8 +23,8 @@ d3.behavior.drag = function() {
         offset,
         origin_ = point(),
         moved = 0,
-        body,
-        userSelect;
+        userSelect = d3_document.body.style[d3_vendor + "UserSelect"];
+    d3_document.body.style[d3_vendor + "UserSelect"] = "none";
 
     var w = d3.select(d3_window)
         .on(touchId != null ? "touchmove.drag-" + touchId : "mousemove.drag", dragmove)
@@ -38,10 +38,6 @@ d3.behavior.drag = function() {
       offset = [0, 0];
     }
 
-    if (body = d3_document.body) {
-      userSelect = body.style[d3_vendor + "UserSelect"];
-      body.style[d3_vendor + "UserSelect"] = "none";
-    }
     event_({type: "dragstart"});
 
     function point() {
@@ -77,7 +73,7 @@ d3.behavior.drag = function() {
       w .on(touchId != null ? "touchmove.drag-" + touchId : "mousemove.drag", null)
         .on(touchId != null ? "touchend.drag-" + touchId : "mouseup.drag", null)
         .on(touchId != null ? "selectstart.drag-" + touchId : "selectstart.drag", null);
-      if (body) body.style[d3_vendor + "UserSelect"] = userSelect;
+      d3_document.body.style[d3_vendor + "UserSelect"] = userSelect;
     }
   }
 

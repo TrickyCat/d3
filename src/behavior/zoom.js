@@ -103,15 +103,9 @@ d3.behavior.zoom = function() {
         eventTarget = d3.event.target,
         moved = 0,
         w = d3.select(d3_window).on("mousemove.zoom", mousemove).on("mouseup.zoom", mouseup).on("selectstart.zoom", d3_eventCancel),
-        body,
-        userSelect,
-        l = location(d3.mouse(target));
-
-    d3_window.focus();
-    if (body = d3_document.body) {
-      userSelect = body.style[d3_vendor + "UserSelect"];
-      body.style[d3_vendor + "UserSelect"] = "none";
-    }
+        l = location(d3.mouse(target)),
+        userSelect = d3_document.body.style[d3_vendor + "UserSelect"];
+    d3_document.body.style[d3_vendor + "UserSelect"] = "none";
 
     function mousemove() {
       moved = 1;
@@ -122,7 +116,7 @@ d3.behavior.zoom = function() {
     function mouseup() {
       if (moved) d3_eventCancel();
       w.on("mousemove.zoom", null).on("mouseup.zoom", null).on("selectstart.zoom", null);
-      if (body) body.style[d3_vendor + "UserSelect"] = userSelect;
+      d3_document.body.style[d3_vendor + "UserSelect"] = userSelect;
       if (moved && d3.event.target === eventTarget) d3_eventSuppress(w, "click.zoom");
     }
   }
