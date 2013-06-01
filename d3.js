@@ -357,6 +357,11 @@ d3 = function() {
       return value === source ? target : value;
     };
   }
+  var d3_vendor = function(p) {
+    var i = -1, n = p.length, s = d3_document.createElement("div").style;
+    while (++i < n) if (p[i] + "Transform" in s) return p[i];
+    return "";
+  }([ "webkit", "ms", "Moz", "O" ]);
   d3.dispatch = function() {
     var dispatch = new d3_dispatch(), i = -1, n = arguments.length;
     while (++i < n) dispatch[arguments[i]] = d3_dispatch_event(dispatch);
@@ -503,7 +508,7 @@ d3 = function() {
       this.on("mousedown.drag", mousedown).on("touchstart.drag", mousedown);
     }
     function mousedown() {
-      var target = this, event_ = event.of(target, arguments), eventTarget = d3.event.target, touchId = d3.event.touches ? d3.event.changedTouches[0].identifier : null, offset, origin_ = point(), moved = 0;
+      var target = this, event_ = event.of(target, arguments), eventTarget = d3.event.target, touchId = d3.event.touches ? d3.event.changedTouches[0].identifier : null, offset, origin_ = point(), moved = 0, body, userSelect;
       var w = d3.select(d3_window).on(touchId != null ? "touchmove.drag-" + touchId : "mousemove.drag", dragmove).on(touchId != null ? "touchend.drag-" + touchId : "mouseup.drag", dragend, true).on(touchId != null ? "selectstart.drag-" + touchId : "selectstart.drag", d3_eventCancel);
       if (origin) {
         offset = origin.apply(target, arguments);
@@ -511,7 +516,10 @@ d3 = function() {
       } else {
         offset = [ 0, 0 ];
       }
-      d3.select("body").style(d3_selection_stylePrefix + "user-select", "none");
+      if (body = d3_document.body) {
+        userSelect = body.style[d3_vendor + "UserSelect"];
+        body.style[d3_vendor + "UserSelect"] = "none";
+      }
       event_({
         type: "dragstart"
       });
@@ -544,7 +552,7 @@ d3 = function() {
           if (d3.event.target === eventTarget) d3_eventSuppress(w, "click");
         }
         w.on(touchId != null ? "touchmove.drag-" + touchId : "mousemove.drag", null).on(touchId != null ? "touchend.drag-" + touchId : "mouseup.drag", null).on(touchId != null ? "selectstart.drag-" + touchId : "selectstart.drag", null);
-        d3.select("body").style(d3_selection_stylePrefix + "user-select", null);
+        if (body) body.style[d3_vendor + "UserSelect"] = userSelect;
       }
     }
     drag.origin = function(x) {
@@ -754,11 +762,6 @@ d3 = function() {
     }
     return value == null ? styleNull : typeof value === "function" ? styleFunction : styleConstant;
   }
-  var d3_selection_stylePrefix = function(p) {
-    var i = -1, n = p.length, s = d3_document.createElement("div").style;
-    while (++i < n) if (p[i] + "Transform" in s) return "-" + p[i].toLowerCase() + "-";
-    return "";
-  }([ "webkit", "ms", "Moz", "O" ]);
   d3_selectionPrototype.property = function(name, value) {
     if (arguments.length < 2) {
       if (typeof name === "string") return this.node()[name];
@@ -1190,9 +1193,12 @@ d3 = function() {
       });
     }
     function mousedown() {
-      var target = this, event_ = event.of(target, arguments), eventTarget = d3.event.target, moved = 0, w = d3.select(d3_window).on("mousemove.zoom", mousemove).on("mouseup.zoom", mouseup).on("selectstart.zoom", d3_eventCancel), l = location(d3.mouse(target));
+      var target = this, event_ = event.of(target, arguments), eventTarget = d3.event.target, moved = 0, w = d3.select(d3_window).on("mousemove.zoom", mousemove).on("mouseup.zoom", mouseup).on("selectstart.zoom", d3_eventCancel), body, userSelect, l = location(d3.mouse(target));
       d3_window.focus();
-      d3.select("body").style(d3_selection_stylePrefix + "user-select", "none");
+      if (body = d3_document.body) {
+        userSelect = body.style[d3_vendor + "UserSelect"];
+        body.style[d3_vendor + "UserSelect"] = "none";
+      }
       function mousemove() {
         moved = 1;
         translateTo(d3.mouse(target), l);
@@ -1201,7 +1207,7 @@ d3 = function() {
       function mouseup() {
         if (moved) d3_eventCancel();
         w.on("mousemove.zoom", null).on("mouseup.zoom", null).on("selectstart.zoom", null);
-        d3.select("body").style(d3_selection_stylePrefix + "user-select", null);
+        if (body) body.style[d3_vendor + "UserSelect"] = userSelect;
         if (moved && d3.event.target === eventTarget) d3_eventSuppress(w, "click.zoom");
       }
     }
@@ -1899,7 +1905,7 @@ d3 = function() {
     d3_timer_queueTail = t0;
     return time;
   }
-  var d3_timer_frame = d3_window.requestAnimationFrame || d3_window.webkitRequestAnimationFrame || d3_window.mozRequestAnimationFrame || d3_window.oRequestAnimationFrame || d3_window.msRequestAnimationFrame || function(callback) {
+  var d3_timer_frame = d3_window.requestAnimationFrame || d3_window[d3_vendor + "RequestAnimationFrame"] || function(callback) {
     setTimeout(callback, 17);
   };
   var d3_format_decimalPoint = ".", d3_format_thousandsSeparator = ",", d3_format_grouping = [ 3, 3 ];
